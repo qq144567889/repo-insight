@@ -1,0 +1,77 @@
+/*!
+ * Repo Insight · 开源项目解读器（Chrome 扩展 / Manifest V3）
+ * 来源作者：Yang YIZHU  (https://github.com/repo-lens)
+ * 禁止商业售卖 —— 完整条款见仓库根目录 LICENSE 与 NOTICE.md
+ * 任何再发布都必须完整保留本段署名信息，不得删除、隐藏或替换。
+ */
+/* ============================================================
+   Repo Insight 主题变量：统一跟随浏览器/系统的深色与浅色模式
+   - color-scheme 让滚动条、表单控件、默认画布也跟随主题
+   - 三个界面（弹窗 / 设置页 / 部署页）共用这一份变量
+   ============================================================ */
+
+:root {
+  color-scheme: light dark;
+
+  /* 浅色 */
+  --surface: #ffffff;
+  --surface-sub: #f6f8fa;
+  --surface-sunken: #f6f8fa;
+  --border: #d0d7de;
+  --border-strong: #afb8c1;
+  --text-1: #1f2328;
+  --text-2: #57606a;
+  --text-3: #8c959f;
+  --accent: #0969da;
+  --accent-strong: #0a5ec0;
+  --accent-contrast: #ffffff;
+  --danger: #cf222e;
+  --warn-bg: #fff8c5;
+  --warn-border: #f5e6a3;
+  --warn-text: #9a6700;
+  --info-bg: #fff1e5;
+  --info-border: #ffd8a8;
+  --info-text: #7d4e00;
+  --error-bg: #ffebe9;
+  --error-border: #ffcecb;
+  --error-text: #a40e26;
+  --ok: #1a7f37;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 深色：贴近浏览器深色界面的中性灰阶，不用纯黑 */
+    --surface: #1f2124;
+    --surface-sub: #26292d;
+    --surface-sunken: #191b1e;
+    --border: #3d444d;
+    --border-strong: #545d68;
+    --text-1: #e6edf3;
+    --text-2: #9aa4af;
+    --text-3: #7d8590;
+    --accent: #4c9aff;
+    --accent-strong: #6cb0ff;
+    --accent-contrast: #0d1117;
+    --danger: #f85149;
+    --warn-bg: #2b2611;
+    --warn-border: #4d3f14;
+    --warn-text: #e3b341;
+    --info-bg: #2b2111;
+    --info-border: #4d3a14;
+    --info-text: #e3a341;
+    --error-bg: #2b1618;
+    --error-border: #4d2024;
+    --error-text: #ff7b72;
+    --ok: #3fb950;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* 系统原生控件（复选框、下拉、滚动条）跟随主题 */
+html { background: var(--surface); }
+
+body {
+  background: var(--surface);
+  color: var(--text-1);
+}

@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Repo Insight — 开源项目解读器"
+  },
+  "appDesc": {
+    "message": "在 GitHub 仓库页面一键生成结构化项目解读与部署工作流 Markdown，支持复制与下载"
+  }
+}

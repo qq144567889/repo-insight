@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+  Repo Insight · 开源项目解读器（Chrome 扩展 / Manifest V3）
+  来源作者：Yang YIZHU  (https://github.com/repo-lens)
+  禁止商业售卖 —— 完整条款见仓库根目录 LICENSE 与 NOTICE.md
+  任何再发布都必须完整保留本段署名信息，不得删除、隐藏或替换。
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Repo Insight</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h3>Repo Insight</h3>
+      <a href="#" id="openOptionsTop" class="link">设置</a>
+    </header>
+
+    <div class="repo-info">
+      <div class="repo-name" id="repo-name">未识别到仓库</div>
+      <div class="repo-meta" id="repo-meta"></div>
+    </div>
+
+    <button id="generateBtn" class="primary" disabled>⚡ 生成解读</button>
+
+    <div id="loading" class="loading" hidden></div>
+    <div id="error" class="error" hidden></div>
+    <div id="consent" class="consent" hidden></div>
+    <div id="degraded" class="degraded" hidden></div>
+    <div id="risky" class="risky" hidden></div>
+    <div id="structure" class="degraded" hidden></div>
+    <div id="interrupted" class="degraded" hidden></div>
+
+    <div class="tabs">
+      <button id="tabPreview" class="tab is-active">解读预览</button>
+      <button id="tabHistory" class="tab">历史记录<span id="historyCount" class="count"></span></button>
+    </div>
+
+    <div id="panePreview">
+      <div class="md-preview" id="md-preview">点击「生成解读」开始分析当前仓库</div>
+      <div class="btn-group">
+        <button id="copyBtn" disabled>📋 复制</button>
+        <button id="downloadBtn" disabled>💾 下载 .md</button>
+        <button id="deployBtn" disabled>🚀 部署</button>
+      </div>
+    </div>
+
+    <div id="paneHistory" hidden>
+      <div class="history-list" id="historyList"></div>
+      <div class="history-actions">
+        <button id="clearHistoryBtn" class="danger">清空历史</button>
+      </div>
+    </div>
+
+    <footer>
+      <span id="quota" class="quota"></span>
+      <a href="#" id="openOptions" class="link">⚙ 设置</a>
+    </footer>
+    <div class="author-line">© Yang YIZHU · 禁止商业售卖</div>
+  </div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
