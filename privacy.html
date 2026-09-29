@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--
+  Repo Insight · 开源项目解读器（Chrome 扩展 / Manifest V3）
+  来源作者：Yang YIZHU  (https://github.com/repo-lens)
+  禁止商业售卖 —— 完整条款见仓库根目录 LICENSE 与 NOTICE.md
+  任何再发布都必须完整保留本段署名信息，不得删除、隐藏或替换。
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>隐私政策 — Repo Insight</title>
+  <style>
+    body { font-family: -apple-system, "PingFang SC", sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #1f2328; line-height: 1.75; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    h2 { font-size: 16px; margin: 26px 0 8px; }
+    .sub { color: #57606a; font-size: 13px; margin-bottom: 20px; }
+    table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 10px 0; }
+    th, td { border: 1px solid #d0d7de; padding: 7px 9px; text-align: left; vertical-align: top; }
+    th { background: #f6f8fa; }
+    code { background: #f6f8fa; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+    .note { background: #fff8c5; border: 1px solid #f5e6a3; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; }
+  </style>
+</head>
+<body>
+  <h1>隐私政策</h1>
+  <div class="sub">适用扩展：Repo Insight（开源项目解读器）｜ 最近更新：2026-09-28</div>
+
+  <h2>1. 我们不收集任何数据</h2>
+  <p>本扩展没有自建服务器，不统计使用行为，不上报崩溃日志，不含任何第三方分析或广告 SDK。</p>
+
+  <h2>2. 数据存在哪里</h2>
+  <table>
+    <tr><th>数据</th><th>存放位置</th><th>说明</th></tr>
+    <tr><td>模型 API Key、GitHub Token</td><td>本机浏览器 <code>chrome.storage.local</code></td><td>明文保存在本地配置文件；已限制为仅本扩展页面可读，但仍建议使用最小权限的 Key</td></tr>
+    <tr><td>仓库信息与 README 缓存</td><td>本机浏览器</td><td>默认保留 6 小时；私有仓库内容不写入缓存</td></tr>
+    <tr><td>生成的 Markdown</td><td>仅当前弹窗内存</td><td>关闭弹窗即丢弃，除非你主动复制或下载</td></tr>
+  </table>
+
+  <h2>3. 数据会发送到哪里</h2>
+  <table>
+    <tr><th>触发动作</th><th>发送内容</th><th>接收方</th></tr>
+    <tr><td>点击「生成解读」</td><td>仓库名称、元信息、根目录文件列表、README 文本（最多 30000 字符）</td><td><code>api.github.com</code>，以及你在设置页选择的模型服务商</td></tr>
+    <tr><td>模型选择 Ollama</td><td>同上</td><td>仅本机 <code>localhost:11434</code>，内容不离开本机</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>私有仓库提示：</strong>当你配置了有权限的 GitHub Token 并打开私有仓库时，README 内容会被发送至所选模型服务商。
+    默认情况下扩展会逐次询问确认；你也可以在设置页永久关闭该行为，或切换为仅本地运行的 Ollama。
+    请根据所在组织的合规要求决定是否使用云端模型。
+  </div>
+
+  <h2>4. 你的控制权</h2>
+  <ul>
+    <li>设置页可随时查看、修改、清空 API Key 与 Token；</li>
+    <li>「清除所有本地数据」会删除设置、缓存与进行中状态；</li>
+    <li>「清除缓存」只删除仓库信息缓存，保留配置。</li>
+  </ul>
+
+  <h2>5. 生成内容的性质</h2>
+  <p>解读文档由第三方大模型生成，可能存在错误、过时信息或不适用于你环境的步骤。扩展会在文档顶部标注 AI 生成的标识。执行任何部署命令前，请核对仓库官方 README 与发布说明。</p>
+
+  <h2>6. 权限用途说明</h2>
+  <table>
+    <tr><th>权限</th><th>用途</th></tr>
+    <tr><td><code>storage</code></td><td>在本机保存设置与仓库信息缓存</td></tr>
+    <tr><td><code>activeTab</code></td><td>读取当前标签页地址，判断是否为仓库页面</td></tr>
+    <tr><td><code>api.github.com</code>、各模型服务域名</td><td>调用对应接口获取仓库信息、生成解读</td></tr>
+    <tr><td>可选域名权限</td><td>仅当你选择「自定义 Base URL」时，按需向你填写的域名申请访问权限</td></tr>
+  </table>
+
+  <h2>7. 卸载后的数据处理</h2>
+  <p>
+    本扩展完全运行在浏览器沙箱内：不修改操作系统设置（不含注册表、plist、启动项、系统服务、环境变量），
+    也不写入浏览器之外的任何文件，只使用扩展专属存储 <code>chrome.storage.local</code>。
+    卸载扩展时，Chrome 会自动删除该扩展的专属存储，因此不会留下系统级残留。
+    如需在卸载前主动清理，可使用设置页的「导出历史备份」「清空历史」与「清除所有本地数据」。
+  </p>
+
+  <h2>8. 联系方式</h2>
+  <p>如有隐私相关问题，请联系扩展维护者（上架信息中提供的邮箱）。</p>
+</body>
+</html>

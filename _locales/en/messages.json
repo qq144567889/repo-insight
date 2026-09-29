@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Repo Insight — Open Source Repo Analyzer"
+  },
+  "appDesc": {
+    "message": "Generate a structured project analysis and deployment workflow in Markdown from any GitHub repository page"
+  }
+}
