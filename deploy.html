@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+  Repo Insight · 开源项目解读器（Chrome 扩展 / Manifest V3）
+  来源作者：Yang YIZHU  (https://github.com/repo-lens)
+  禁止商业售卖 —— 完整条款见仓库根目录 LICENSE 与 NOTICE.md
+  任何再发布都必须完整保留本段署名信息，不得删除、隐藏或替换。
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>部署方案 — Repo Insight</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: var(--surface-sub); }
+    .page { max-width: 860px; margin: 0 auto; padding: 24px 20px 60px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+    h1 { font-size: 19px; margin-bottom: 4px; }
+    h2 { font-size: 15px; margin: 0 0 10px; }
+    h3 { font-size: 13.5px; margin: 14px 0 6px; }
+    .muted { color: var(--text-2); font-size: 13px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tab { width: auto; padding: 8px 14px; font-size: 13.5px; }
+    .tab.is-active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .pill { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--surface-sub); color: var(--text-1); }
+    .pill.high { background: var(--error-bg); color: var(--danger); }
+    .pill.medium { background: var(--warn-bg); color: var(--warn-text); }
+    .pill.low { background: var(--warn-bg); color: var(--ok); }
+    .hit { border-left: 3px solid var(--border); padding: 4px 0 4px 10px; margin: 6px 0; font-size: 13px; }
+    .hit.high { border-color: var(--danger); }
+    .hit.medium { border-color: #d4a72c; }
+    .hit code { background: var(--surface-sub); padding: 1px 4px; border-radius: 3px; font-size: 12px; word-break: break-all; }
+    textarea { width: 100%; min-height: 86px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; background: var(--surface-sunken); color: var(--text-1); }
+    input[type="number"] { width: 90px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-sunken); color: var(--text-1); }
+    .links a { font-size: 13px; }
+    .gate { background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--text-1); border-radius: 8px; padding: 10px 12px; font-size: 13px; margin: 12px 0; }
+    .warnbox { background: var(--surface-sub); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; color: var(--text-2); margin: 10px 0; }
+    .md-preview { max-height: 420px; }
+    .kv { font-size: 12.5px; color: var(--text-2); }
+    button { width: auto; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-sub); color: var(--text-1); padding: 8px 14px; font-size: 13.5px; cursor: pointer; }
+    button:hover { border-color: var(--border-strong); }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .page-foot { max-width: 860px; margin: 0 auto; padding: 0 20px 40px; font-size: 12px; color: var(--text-3); }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="head-row">
+        <div>
+          <h1>🚀 部署方案</h1>
+          <div class="muted" id="repo-line">正在读取当前分析结果…</div>
+        </div>
+      </div>
+      <div class="warnbox">
+        本页只生成方案与脚本，<strong>不会自动执行任何命令</strong>。所有脚本都需要你自己审阅后再运行。
+      </div>
+    </div>
+
+    <div id="empty" class="card" hidden>
+      <div class="muted">还没有可用的分析结果。请先打开一个 GitHub 仓库页，点击「生成解读」后再回到本页。</div>
+    </div>
+
+    <div id="workspace" hidden>
+      <div class="tabs">
+        <button id="tabSandbox" class="tab is-active">🔬 方案 A：一键沙箱体验</button>
+        <button id="tabLocal" class="tab">💻 方案 B：一键本地部署</button>
+      </div>
+
+      <!-- 方案 A -->
+      <div id="paneSandbox" class="card">
+        <h2>🔬 方案 A：一键沙箱体验（推荐）</h2>
+        <div class="kv" id="sandboxMeta"></div>
+        <div class="links" id="sandboxLinks" style="margin-top:10px"></div>
+        <div class="row" style="margin-top:12px">
+          <button id="copyLinksBtn">复制链接</button>
+          <button id="buildSandboxBtn" class="primary">生成沙箱体验章节</button>
+        </div>
+        <h3>沙箱限制</h3>
+        <ul class="muted" style="margin-left:18px">
+          <li>无法操控本地硬件（如 ESP32 烧录、本机 GUI 程序）</li>
+          <li>免费实例闲置会休眠，不适合 7×24 常驻</li>
+          <li>沙箱内的密钥请用平台 Secret 环境变量注入，不要硬编码</li>
+        </ul>
+      </div>
+
+      <!-- 方案 B -->
+      <div id="paneLocal" class="card" hidden>
+        <h2>💻 方案 B：一键本地部署（受控执行）</h2>
+
+        <h3>🔍 自动风险评估（规则扫描，不调用模型）</h3>
+        <div class="kv">风险等级：<span id="riskLevel" class="pill">—</span></div>
+        <div id="riskHits"></div>
+
+        <h3>📋 本机环境预检</h3>
+        <div class="kv">检测脚本只做检测：不安装、不修改任何文件或配置。</div>
+        <div class="row" style="margin-top:8px">
+          <button id="downloadDetectBtn">下载检测脚本 detect-env.sh</button>
+          <button id="copyDetectBtn">复制脚本内容</button>
+        </div>
+        <div class="kv" style="margin-top:10px">在本机运行 <code>bash repo-insight-detect-env.sh</code>，把输出的 JSON 整行粘贴到这里：</div>
+        <textarea id="envJson" placeholder='例如：{"node":"v20.11.0","npm":"10.2.4","python3":"未安装","docker":"Docker version 25.0.3","git":"git version 2.43.0","port_3000":"空闲","disk_free":"120 GB","net_github":"通"}'></textarea>
+        <div class="row" style="margin-top:8px">
+          <label class="kv">端口 <input type="number" id="port" value="3000"></label>
+          <button id="parseEnvBtn">解析预检结果</button>
+        </div>
+        <div id="envResult" style="margin-top:10px"></div>
+
+        <div class="gate">
+          <label><input type="checkbox" id="riskGate">
+            我已阅读上述风险，理解开源脚本拥有本机文件与密钥的访问能力，
+            <strong id="gateExtra">自愿继续生成部署方案</strong>。</label>
+        </div>
+        <div class="row">
+          <button id="buildLocalBtn" class="primary" disabled>生成本地部署章节</button>
+        </div>
+      </div>
+
+      <!-- 结果 -->
+      <div id="resultCard" class="card" hidden>
+        <h2>生成结果</h2>
+        <div class="row">
+          <button id="copySectionBtn">复制章节</button>
+          <button id="downloadDocBtn">下载完整文档（.md）</button>
+          <button id="downloadDeployScriptBtn">下载部署脚本</button>
+          <button id="downloadDetectScriptBtn">下载检测脚本</button>
+        </div>
+        <div class="md-preview" id="resultPreview" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-foot">Repo Insight · 来源作者 Yang YIZHU · © 保留署名，禁止商业售卖</div>
+  <script type="module" src="deploy.js"></script>
+</body>
+</html>

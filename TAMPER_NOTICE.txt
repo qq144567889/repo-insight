@@ -1,0 +1,7 @@
+Repo Insight · 开源项目解读器
+来源作者：Yang YIZHU (https://github.com/repo-lens)
+禁止商业售卖 / No commercial resale.
+
+本发行包内所有源码、文档与界面文案中的署名信息（作者、来源、禁止商业售卖）
+均为授权条款的一部分，不得删除、隐藏或替换。
+完整条款见 LICENSE 与 NOTICE.md。

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+  Repo Insight · 开源项目解读器（Chrome 扩展 / Manifest V3）
+  来源作者：Yang YIZHU  (https://github.com/repo-lens)
+  禁止商业售卖 —— 完整条款见仓库根目录 LICENSE 与 NOTICE.md
+  任何再发布都必须完整保留本段署名信息，不得删除、隐藏或替换。
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>设置 — Repo Insight</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { font-family: -apple-system, "PingFang SC", sans-serif; max-width: 620px; margin: 32px auto; padding: 0 20px 60px; color: var(--text-1); line-height: 1.6; }
+    h2 { margin-bottom: 6px; }
+    .sub { color: var(--text-2); font-size: 13px; margin-bottom: 22px; }
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      background: var(--surface);
+    }
+    legend { font-weight: 600; font-size: 14px; padding: 0 6px; }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13.5px; }
+    input, select {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 14px; box-sizing: border-box; background: var(--surface-sunken); color: var(--text-1);
+    }
+    input[type="checkbox"] { width: auto; margin-right: 6px; }
+    .check { display: flex; align-items: flex-start; font-weight: 500; font-size: 13.5px; }
+    .hint { font-size: 12px; color: var(--text-2); margin-top: 5px; }
+    .hint code { background: var(--surface-sub); padding: 1px 4px; border-radius: 3px; }
+    .actions { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+    button {
+      padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface-sub); color: var(--text-1); cursor: pointer; font-size: 14px;
+    }
+    button:hover { border-color: var(--border-strong); }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    button.danger { color: var(--danger); border-color: var(--danger); background: var(--surface); }
+    .actions button, .row-actions button { width: auto; }
+    button.mini { padding: 3px 8px; font-size: 12px; }
+    .row-actions { margin-top: 6px; }
+    #status { margin-top: 14px; font-size: 13.5px; white-space: pre-wrap; }
+    .ok { color: var(--ok); }
+    .err { color: var(--danger); }
+    .warn { color: var(--warn-text); }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <h2>⚙️ Repo Insight 设置</h2>
+  <div class="sub">所有配置只保存在本机浏览器（<code>chrome.storage.local</code>），不会上传到任何服务器。</div>
+
+  <fieldset>
+    <legend>模型服务</legend>
+
+    <div class="field">
+      <label for="provider">提供商</label>
+      <select id="provider">
+        <option value="deepseek">DeepSeek（默认）</option>
+        <option value="openai">OpenAI</option>
+        <option value="zhipu">智谱 GLM</option>
+        <option value="moonshot">Moonshot Kimi</option>
+        <option value="qwen">阿里通义千问</option>
+        <option value="ollama">Ollama（本地运行，内容不外发）</option>
+        <option value="custom">自定义（OpenAI 兼容）</option>
+      </select>
+      <div class="hint" id="providerHint"></div>
+    </div>
+
+    <div class="field" id="customBaseField" hidden>
+      <label for="customBaseUrl">自定义 Base URL</label>
+      <input id="customBaseUrl" placeholder="https://your-api.example.com/v1">
+      <div class="hint">必须使用 https（本机地址可用 http）。保存时会请求该域名的访问权限，否则请求会被浏览器拦截。</div>
+    </div>
+
+    <div class="field">
+      <label for="apiKey">API Key</label>
+      <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off">
+      <div class="row-actions"><button type="button" id="clearApiKeyBtn" class="mini">清除已保存的 Key</button></div>
+      <div class="hint">选择 Ollama 时无需填写。仓库元信息与 README 会随请求发送给所选服务商。</div>
+    </div>
+
+    <div class="field">
+      <label for="model">模型（留空使用默认）</label>
+      <input id="model" placeholder="例如 deepseek-chat / gpt-4o-mini / glm-4-flash">
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>GitHub 访问</legend>
+    <div class="field">
+      <label for="githubToken">GitHub Token（可选）</label>
+      <input id="githubToken" type="password" placeholder="ghp_... 或 github_pat_..." autocomplete="off">
+      <div class="row-actions"><button type="button" id="clearTokenBtn" class="mini">清除已保存的 Token</button></div>
+      <div class="hint">
+        不填也能用（匿名 60 次/小时）。只为提升配额时，Token <strong>不需要任何写权限</strong>：<br>
+        推荐用 Fine-grained token，Repository access 选 <em>Public Repositories (read-only)</em>；
+        不要使用 <code>repo</code>（全量私有仓库读写）或 <code>public_repo</code>（公开仓库读写）。
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>隐私与数据</legend>
+    <div class="field">
+      <label class="check"><input type="checkbox" id="allowPrivateToCloud"> 允许把私有仓库内容发送到云端模型</label>
+      <div class="hint">默认关闭。关闭时，遇到私有仓库会逐次询问；选择 Ollama 则完全不外发。</div>
+    </div>
+    <div class="field">
+      <label class="check"><input type="checkbox" id="enableCache"> 启用本地缓存（README 与仓库信息，6 小时）</label>
+      <div class="hint">私有仓库不会被缓存；缓存只存在于本机，可随时清除。</div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>交互与输出</legend>
+    <div class="field">
+      <label for="detailLevel">输出详细度</label>
+      <select id="detailLevel">
+        <option value="standard">标准（约 4000 tokens，内容完整）</option>
+        <option value="brief">精简（约 2000 tokens，生成更快）</option>
+      </select>
+      <div class="hint">精简模式生成时间约减半，但可能省略部分细节；章节结构保持不变。</div>
+    </div>
+    <div class="field">
+      <label class="check"><input type="checkbox" id="autoPopup"> 打开 GitHub 仓库页时自动弹出扩展弹窗</label>
+      <div class="hint">
+        同一标签页同一地址只弹一次。若浏览器拒绝自动弹出（例如窗口未聚焦），会改为在扩展图标上显示角标 ✦ 提示。
+        自动弹出需要读取标签页地址，为此申请了 <code>https://github.com/*</code> 域名权限（比申请全量 tabs 权限更窄）。
+      </div>
+    </div>
+    <div class="field">
+      <label class="check"><input type="checkbox" id="appendLicenseSection"> 在文末附加独立的「许可证与使用限制」章节</label>
+      <div class="hint">
+        默认关闭。关闭时许可证限制会写进「短板、坑点与风险」章节的条目里，保持与输出模板一致的章节结构（不增删章节）。
+      </div>
+    </div>
+    <div class="hint">
+      文档结构：一句话定位 → 项目定位与核心功能 → 架构说明 → 短板、坑点与风险（重点）→ 适合 / 不适合人群 → 一键部署工作流 → 总结（含评级）。
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>数据与隐私</legend>
+    <div class="field">
+      <label class="check"><input type="checkbox" id="historyEnabled"> 保存生成历史（最多 20 条，仅存本机）</label>
+      <div class="hint">同一仓库只保留最新一条；超过 20 条或 5 MB 时自动淘汰最旧记录。</div>
+    </div>
+    <div class="field">
+      <label class="check"><input type="checkbox" id="historyIncludePrivate"> 历史记录包含私有仓库内容</label>
+      <div class="hint">默认关闭：私有仓库的解读不会写入本地历史。</div>
+    </div>
+    <div class="field">
+      <label>本机存储占用</label>
+      <div class="hint" id="storageStats">统计中…</div>
+    </div>
+    <div class="actions">
+      <button id="exportBtn">📤 导出历史备份（JSON）</button>
+      <button id="clearHistoryBtn" class="danger">🗑 清空历史</button>
+    </div>
+    <div class="hint" style="margin-top:12px">
+      <strong>关于卸载：</strong>本扩展完全运行在浏览器沙箱内，不修改操作系统设置，也不写入浏览器之外的文件；
+      卸载时 Chrome 会自动删除扩展专属存储（含 API Key、Token 与历史记录），因此不会留下系统级残留。
+      保险起见，可以先「导出历史备份」，再执行「清除所有本地数据」。
+    </div>
+  </fieldset>
+
+  <div class="actions">
+    <button id="testBtn">🔌 测试连接</button>
+    <button id="saveBtn" class="primary">💾 保存</button>
+    <button id="clearCacheBtn">♻️ 清除缓存</button>
+    <button id="clearAllBtn" class="danger">🗑 清除所有本地数据</button>
+  </div>
+
+  <div id="status"></div>
+
+  <p class="hint" style="margin-top:20px">
+    数据处理说明见 <a href="privacy.html" target="_blank" rel="noopener">隐私政策</a>。
+  </p>
+  <p class="hint" style="margin-top:14px">
+    Repo Insight · 来源作者 <strong>Yang YIZHU</strong> · © 保留署名，<strong>禁止商业售卖</strong>（见仓库 LICENSE 与 NOTICE.md）。
+  </p>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>
